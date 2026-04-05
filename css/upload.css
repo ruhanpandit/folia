@@ -1,0 +1,106 @@
+/* ── UPLOAD SCREEN ── */
+#uploadScreen {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:2rem;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(59,130,246,.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(124,58,237,.1)  0%, transparent 60%),
+    var(--bg);
+}
+.upload-logo { display:flex; align-items:center; gap:.9rem; margin-bottom:2.5rem; }
+.upload-logo-icon { width:52px; height:52px; flex-shrink:0; }
+.folia-wordmark {
+  font-size:1.75rem; font-weight:600; letter-spacing:-.04em;
+  background:linear-gradient(135deg,#10b981,#34d399);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.folia-tagline {
+  font-size:.62rem; font-weight:600; letter-spacing:.12em;
+  color:var(--txt2); margin-top:.2rem;
+}
+.upload-card {
+  width:100%; max-width:520px; background:var(--card);
+  border:1px solid var(--border); border-radius:20px;
+  padding:2rem; box-shadow:0 24px 80px rgba(0,0,0,.5);
+}
+.upload-card h2  { font-size:1.1rem; font-weight:700; margin-bottom:.4rem; }
+.upload-card .sub { font-size:.82rem; color:var(--txt2); margin-bottom:1.5rem; line-height:1.55; }
+
+/* drop zone */
+.dropzone {
+  border:2px dashed var(--border); border-radius:14px;
+  padding:2.5rem 1.5rem; text-align:center; cursor:pointer;
+  transition:all .25s; position:relative; background:var(--bg2);
+  margin-bottom:1.25rem;
+}
+.dropzone:hover, .dropzone.dragover {
+  border-color:var(--blue); background:rgba(59,130,246,.06);
+}
+.dropzone input[type=file] {
+  position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+}
+.dz-icon  { font-size:2.5rem; margin-bottom:.75rem; display:block; }
+.dz-title { font-size:.9rem; font-weight:600; margin-bottom:.3rem; }
+.dz-sub   { font-size:.75rem; color:var(--txt2); }
+.dz-preview {
+  display:none; flex-direction:column; align-items:center; gap:.75rem;
+}
+.dz-preview img {
+  max-height:140px; max-width:100%; border-radius:8px;
+  border:1px solid var(--border); object-fit:contain;
+}
+.dz-preview-name { font-size:.78rem; color:var(--txt3); }
+.dz-change { font-size:.72rem; color:var(--blue); cursor:pointer; text-decoration:underline; }
+
+.api-hint { font-size:.72rem; color:var(--txt2); margin-bottom:1.25rem; line-height:1.5; }
+.api-hint a { color:var(--blue); text-decoration:none; }
+.api-hint a:hover { text-decoration:underline; }
+
+/* analyze button */
+.analyze-btn {
+  width:100%; padding:.85rem; border:none; border-radius:12px;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:#fff; font-size:.9rem; font-weight:700; cursor:pointer;
+  transition:all .25s; letter-spacing:.01em;
+  box-shadow:0 4px 20px rgba(59,130,246,.3);
+}
+.analyze-btn:hover:not(:disabled) {
+  transform:translateY(-2px); box-shadow:0 8px 32px rgba(59,130,246,.5);
+}
+.analyze-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+.error-box {
+  display:none; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25);
+  border-radius:10px; padding:.75rem 1rem; font-size:.8rem; color:var(--red);
+  margin-bottom:1rem; line-height:1.5;
+}
+
+/* ── LOADING SCREEN ── */
+#loadingScreen {
+  display:none; position:fixed; inset:0; z-index:999;
+  background:var(--bg);
+  flex-direction:column; align-items:center; justify-content:center; gap:1.5rem;
+}
+.spin-ring {
+  width:64px; height:64px; border:3px solid var(--border);
+  border-top-color:var(--blue); border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-title { font-size:1.1rem; font-weight:700; }
+.loading-sub   { font-size:.82rem; color:var(--txt2); }
+.loading-steps { display:flex; flex-direction:column; gap:.5rem; margin-top:.5rem; }
+.lstep {
+  display:flex; align-items:center; gap:.6rem;
+  font-size:.8rem; color:var(--txt2); transition:color .3s;
+}
+.lstep.done   { color:var(--green); }
+.lstep.active { color:var(--txt); }
+.lstep-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--border); transition:background .3s;
+}
+.lstep.done  .lstep-dot { background:var(--green); }
+.lstep.active .lstep-dot { background:var(--blue); animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }

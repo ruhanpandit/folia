@@ -1,0 +1,25 @@
+<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Folia Logo - Concept 3: Diversified -->
+  
+  <!-- Central stem branching into leaves -->
+  <g transform="translate(10, 10)">
+    <!-- Stem -->
+    <path fill="#059669" d="M30 60 L30 35 L34 35 L34 60 Z"/>
+    
+    <!-- Branch lines -->
+    <path fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" d="M32 35 Q15 25 12 12"/>
+    <path fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" d="M32 35 Q32 18 32 5"/>
+    <path fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" d="M32 35 Q49 25 52 12"/>
+    
+    <!-- Leaf tips -->
+    <ellipse fill="#10B981" cx="10" cy="10" rx="10" ry="6" transform="rotate(-45 10 10)"/>
+    <ellipse fill="#34D399" cx="32" cy="4" rx="10" ry="6"/>
+    <ellipse fill="#6EE7B7" cx="54" cy="10" rx="10" ry="6" transform="rotate(45 54 10)"/>
+  </g>
+  
+  <!-- Wordmark -->
+  <text x="75" y="42" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="500" font-size="32" fill="#111827">folia</text>
+  
+  <!-- Tagline -->
+  <text x="75" y="58" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="400" font-size="10" fill="#6B7280" letter-spacing="0.5">YOUR PORTFOLIO, VISUALIZED</text>
+</svg>

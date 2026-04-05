@@ -1,0 +1,88 @@
+<div class="wrap">
+  <div class="stats" id="statsRow"></div>
+
+  <!-- Investment Distribution -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">
+        <div class="ptdot" style="background:var(--blue)"></div>Investment Distribution
+      </div>
+      <div class="ctabs">
+        <button class="ctab active" onclick="showChart('alloc',this)">Allocation</button>
+        <button class="ctab" onclick="showChart('sector',this)">Sectors</button>
+        <button class="ctab" onclick="showChart('perf',this)">P&amp;L</button>
+        <button class="ctab" onclick="showChart('day',this)">Day Change</button>
+      </div>
+    </div>
+
+    <div id="cpanel-alloc" class="cpanel active">
+      <div class="donut-wrap">
+        <div class="donut-canvas-wrap">
+          <canvas id="allocChart" width="280" height="280"></canvas>
+          <div class="donut-center">
+            <div class="donut-center-val" id="donutVal"></div>
+            <div class="donut-center-lbl">Total Value</div>
+          </div>
+        </div>
+        <div class="donut-legend" id="allocLegend"></div>
+      </div>
+    </div>
+
+    <div id="cpanel-sector" class="cpanel">
+      <div class="donut-wrap">
+        <div class="donut-canvas-wrap">
+          <canvas id="sectorChart" width="280" height="280"></canvas>
+          <div class="donut-center">
+            <div class="donut-center-val" id="sectorCount"></div>
+            <div class="donut-center-lbl">Sectors</div>
+          </div>
+        </div>
+        <div class="donut-legend" id="sectorLegend"></div>
+      </div>
+    </div>
+
+    <div id="cpanel-perf" class="cpanel-bar">
+      <div class="bar-wrap"><canvas id="perfChart"></canvas></div>
+    </div>
+
+    <div id="cpanel-day" class="cpanel-bar">
+      <div class="bar-wrap"><canvas id="dayChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Sector Breakdown -->
+  <div class="panel" id="sectorPanel">
+    <div class="panel-head" style="margin-bottom:.75rem;">
+      <div class="panel-title">
+        <div class="ptdot" style="background:var(--purple)"></div>Sector Breakdown
+      </div>
+    </div>
+    <div class="sector-bars" id="sectorBars"></div>
+  </div>
+
+  <!-- Holdings Table -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">
+        <div class="ptdot" style="background:var(--cyan)"></div>Holdings Detail
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table id="holdingsTable">
+        <thead>
+          <tr>
+            <th>Symbol / Name</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Market Value</th>
+            <th>Weight</th>
+            <th>Day Change</th>
+            <th>Total P&amp;L</th>
+            <th>Return %</th>
+          </tr>
+        </thead>
+        <tbody id="holdingsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>

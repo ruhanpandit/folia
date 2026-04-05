@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folia</title>
+
+<!--
+  OWASP A05 — Content Security Policy
+  ──────────────────────────────────────────────────────────────────────────
+  CSP must be set as an HTTP response header — NOT a meta tag — for two reasons:
+    1. Meta-tag CSP can be bypassed by injected HTML before the tag is parsed.
+    2. Tesseract.js spawns a blob: web worker whose fetch requests carry a null
+       origin; connect-src 'self' does not match null-origin requests, so any
+       meta-tag CSP strict enough to be useful also breaks Tesseract's WASM and
+       traineddata downloads.
+
+  When you serve Folia from a real web server, add this response header:
+
+    Content-Security-Policy:
+      default-src 'none';
+      script-src  'self' https://cdn.jsdelivr.net 'unsafe-inline' 'wasm-unsafe-eval';
+      style-src   'self' 'unsafe-inline';
+      img-src     'self' blob: data:;
+      worker-src  blob:;
+      connect-src 'self' https://cdn.jsdelivr.net https://tessdata.projectnaptha.com *;
+      font-src    'self';
+
+  The primary XSS defence in this app is the esc() function in js/state.js,
+  which escapes all OCR-derived strings before they reach innerHTML. CSP is a
+  complementary second layer, not a replacement for output encoding.
+-->
+
+<!--
+  OWASP A08 — Software & Data Integrity: Subresource Integrity
+  ─────────────────────────────────────────────────────────────
+  crossorigin="anonymous" is required for SRI to work cross-origin.
+  TODO: add integrity="sha384-<hash>" attributes once you pin to exact
+  CDN file hashes (generate at https://www.srihash.org/).
+  Until then, crossorigin ensures the browser sends a CORS preflight,
+  and the CDN's CORS headers are verified before execution.
+-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/upload.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+
+  
+
+<!-- ════════════════ UPLOAD SCREEN ════════════════ -->
+<div id="uploadScreen">
+  <div class="upload-logo">
+    <img src="img/folia-icon.svg" class="upload-logo-icon" alt="Folia">
+    <div>
+      <h1 class="folia-wordmark">folia</h1>
+      <p class="folia-tagline">YOUR PORTFOLIO, VISUALIZED</p>
+    </div>
+  </div>
+
+  <div class="upload-card">
+    <h2>Analyze Your Portfolio</h2>
+    <p class="sub">Upload a screenshot from your brokerage (Schwab, Fidelity, Robinhood, etc.) and get an instant breakdown of your holdings, performance, and personalized recommendations — no account needed.</p>
+
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept="image/*">
+      <div id="dzDefault">
+        <span class="dz-icon">📤</span>
+        <div class="dz-title">Drop your screenshot here</div>
+        <div class="dz-sub">or click to browse — PNG, JPG, WebP supported</div>
+      </div>
+      <div class="dz-preview" id="dzPreview">
+        <img id="dzPreviewImg" src="" alt="preview">
+        <span class="dz-preview-name" id="dzFileName"></span>
+        <span class="dz-change">click to change image</span>
+      </div>
+    </div>
+
+    <p class="api-hint" style="margin-bottom:1.25rem;">
+      💡 <strong>Tip:</strong> Use a full-resolution screenshot at 100% zoom for best accuracy. The text in your holdings table should be sharp and clearly readable.
+    </p>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <button class="analyze-btn" id="analyzeBtn" onclick="startAnalysis()" disabled>
+      Analyze Portfolio
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════ LOADING SCREEN ════════════════ -->
+<div id="loadingScreen" style="display:none;">
+  <div class="spin-ring"></div>
+  <div class="loading-title">Analyzing your portfolio…</div>
+  <div class="loading-sub" id="ocrProgress">Loading OCR engine…</div>
+  <div class="loading-steps">
+    <div class="lstep active" id="step1"><div class="lstep-dot"></div>Loading OCR engine</div>
+    <div class="lstep" id="step2"><div class="lstep-dot"></div>Reading text from image</div>
+    <div class="lstep" id="step3"><div class="lstep-dot"></div>Parsing holdings &amp; building dashboard</div>
+  </div>
+</div>
+
+<!-- ════════════════ MAIN APP ════════════════ -->
+<div id="appContainer">
+
+  <header class="header">
+    <div class="hlogo">
+      <img src="img/folia-icon.svg" class="hlogo-icon" alt="Folia">
+      <h1 class="folia-wordmark">folia</h1>
+    </div>
+    <div class="hright">
+      <img id="headerThumb" class="thumb-preview" src="" alt="">
+      <button class="reupload-btn" onclick="showUpload()">⬆ Update Portfolio</button>
+      <div class="live-pill"><div class="live-dot"></div>Live</div>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <button class="ntab active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+    <button class="ntab" onclick="showPage('analysis',this)">🔍 Analysis</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="page active"></div>
+
+  <!-- ANALYSIS -->
+  <div id="analysis" class="page"></div>
+
+</div><!-- /appContainer -->
+
+<script src="js/state.js"></script>
+<script src="js/upload.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/analysis.js"></script>
+<script>
+  // Inject page fragments — same-origin fetches only (enforced by CSP connect-src 'self').
+  // OWASP A09 — Logging & Monitoring: errors are surfaced to the user rather than silently swallowed.
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const [dashRes, analysisRes] = await Promise.all([
+        fetch('pages/dashboard.html'),
+        fetch('pages/analysis.html'),
+      ]);
+
+      if (!dashRes.ok)     throw new Error(`Failed to load dashboard (HTTP ${dashRes.status})`);
+      if (!analysisRes.ok) throw new Error(`Failed to load analysis (HTTP ${analysisRes.status})`);
+
+      const [dashHtml, analysisHtml] = await Promise.all([dashRes.text(), analysisRes.text()]);
+
+      document.getElementById('dashboard').innerHTML = dashHtml;
+      document.getElementById('analysis').innerHTML  = analysisHtml;
+    } catch (err) {
+      // Show a visible error rather than a broken blank page
+      console.error('Folia init error:', err);
+      document.body.innerHTML =
+        `<div style="display:flex;align-items:center;justify-content:center;height:100vh;` +
+        `font-family:system-ui;color:#ef4444;background:#080c18;padding:2rem;text-align:center">` +
+        `<div><strong>Failed to load Folia.</strong><br><small style="color:#64748b">` +
+        `${err.message}.<br>Make sure you are serving this folder via a local web server.</small></div></div>`;
+    }
+  });
+</script>
+</body>
+</html>

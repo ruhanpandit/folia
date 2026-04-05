@@ -1,0 +1,77 @@
+<div class="wrap">
+
+  <!-- Controls -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">
+        <div class="ptdot" style="background:var(--purple)"></div>Personalize Your Analysis
+      </div>
+    </div>
+    <div class="controls-grid">
+      <div>
+        <span class="cg-label">Risk Tolerance</span>
+        <div class="slider-row">
+          <span>🛡 Conservative</span><span>⚖ Moderate</span><span>🚀 Aggressive</span>
+        </div>
+        <input type="range" class="risk-range" id="riskSlider" min="1" max="10" value="5" oninput="updateAnalysis()">
+        <div class="badge-row">
+          <span class="badge" id="riskBadge" style="background:rgba(245,158,11,.15);color:var(--yellow);">Moderate (5/10)</span>
+        </div>
+      </div>
+      <div>
+        <span class="cg-label">Investment Timeframe</span>
+        <div class="slider-row">
+          <span>⚡ Short-term</span><span>📆 Medium</span><span>🌱 Long-term</span>
+        </div>
+        <input type="range" class="time-range" id="timeSlider" min="1" max="5" value="3" oninput="updateAnalysis()">
+        <div class="badge-row">
+          <span class="badge" id="timeBadge" style="background:rgba(124,58,237,.15);color:var(--purple);">Medium (1–2 yrs)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Health Score -->
+  <div class="panel">
+    <div class="panel-title" style="margin-bottom:.2rem;">
+      <div class="ptdot" style="background:var(--green)"></div>Portfolio Health Score
+    </div>
+    <div id="healthCtx" style="font-size:.75rem;color:var(--txt2);margin-top:.3rem;margin-bottom:.2rem;"></div>
+    <div class="health-row">
+      <div style="flex:1;">
+        <div class="health-bar-bg"><div class="health-bar-fill" id="healthBar"></div></div>
+        <div class="health-meta" id="healthMeta"></div>
+      </div>
+      <div class="health-num" id="healthNum"></div>
+    </div>
+  </div>
+
+  <!-- Strengths & Weaknesses -->
+  <div class="ag">
+    <div class="panel" style="margin-bottom:0;">
+      <div class="acard-title">
+        <div class="acard-icon icon-g">✅</div>Strengths
+      </div>
+      <ul class="alist" id="strengthsList"></ul>
+    </div>
+    <div class="panel" style="margin-bottom:0;">
+      <div class="acard-title">
+        <div class="acard-icon icon-r">⚠️</div>Weaknesses &amp; Risks
+      </div>
+      <ul class="alist" id="weaknessesList"></ul>
+    </div>
+  </div>
+  <div style="margin-bottom:1.25rem;"></div>
+
+  <!-- Recommendations -->
+  <div class="panel">
+    <div class="panel-head" style="margin-bottom:.5rem;">
+      <div class="panel-title">
+        <div class="acard-icon icon-b" style="width:28px;height:28px;font-size:.85rem;">💡</div>
+        Personalized Recommendations
+      </div>
+    </div>
+    <div id="recList"></div>
+  </div>
+
+</div>
